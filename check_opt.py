@@ -5,7 +5,6 @@ import os
 import sys
 import os.path
 import re
-import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from time import sleep
