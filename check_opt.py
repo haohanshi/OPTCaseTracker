@@ -34,13 +34,17 @@ def check_opt_status(casenumber):
     }
     url = "https://egov.uscis.gov/casestatus/mycasestatus.do"
     data = {"appReceiptNum": casenumber, 'caseStatusSearchBtn': 'CHECK+STATUS'}
+    try:
+        res = requests.post(url, data=data, headers=headers)
+        doc = pq(res.text)
+        status = doc('h1').text()
+        code = STATUS_OK if status else STATUS_ERROR
+        details = doc('.text-center p').text()
+        return (code, status, details)
+    except Exception as e:
+        print(str(e))
+        return (STATUS_ERROR, None, None)
 
-    res = requests.post(url, data=data, headers=headers)
-    doc = pq(res.text)
-    status = doc('h1').text()
-    code = STATUS_OK if status else STATUS_ERROR
-    details = doc('.text-center p').text()
-    return (code, status, details)
 
 def send_changed_email(casenumber, recipient, oldStatus, newStatus, details):
     msg = MIMEMultipart()
